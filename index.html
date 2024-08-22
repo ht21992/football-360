@@ -1,49 +1,151 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <link rel="stylesheet" href="styles.css">
-    <title>League Matches</title>
-  </head>
-  <body>
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <button id="my-predictions">پیش بینی های من</button>
-    <button id="scoreboard">جدول امتیازات</button>
-    <button id="backbtn" class="d-none">بازگشت</button>
 
-    <div class="page main-container">
-        <div class="header">
-            <h1>لیگ برتر ایران</h1>
+  <!-- font awsome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+    crossorigin="anonymous">
+  <link rel="stylesheet" href="styles.css">
 
-            <div class="tabs">
-                <button class="tab" data-week="3">هفته 3</button>
-                <button class="tab" data-week="2">هفته 2</button>
-                <button class="tab active" data-week="1">هفته 1</button>
+
+  <title>فوتبال 360</title>
+</head>
+
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-dark " dir="rtl">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">فوتبال 360</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+        aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <a class="nav-link active"  title=" مشاهده صفحه اصلی" id="main-page" aria-current="page" href="#">صفحه اصلی</a>
+          <a class="nav-link"  title=" مشاهده لیگ برتر" id="league-page" href="#">لیگ برتر</a>
+          <a class="nav-link" href="#"  title=" مشاهده پیش‌بینی های من" id="my-predictions-page">پیش بینی های من</a>
+          <a class="nav-link" href="#"  title=" مشاهده جدول امتیازات" id="scoreboard-page"> جدول امتیازات</a>
+        </div>
+      </div>
+
+
+      <div class="d-flex">
+        <a class="nav-link" style="color:gray" href="#" id="profile-page" title="پروفایل کاربری"><span class="fa fa-user"></span></a>
+      </div>
+
+    </div>
+  </nav>
+
+
+
+  <div class="page main-container">
+    <div class="header">
+      <div class="container">
+        <h1 class="text-center my-4">قوانین پیش‌بینی مسابقات فوتبال</h1>
+
+        <div class="card" >
+            <div class="card-body">
+                <h5 class="card-title" style="color: #32de84;">نتیجه دقیق</h5>
+                <p class="card-text">.اگر نتیجه دقیق مسابقه را پیش‌بینی کنید،<strong style="font-weight:bolder ;font-size: 20px; color: #32de84;"> ۱۰ </strong>  امتیاز کسب خواهید کرد</p>
             </div>
         </div>
 
-        <div class="matches" id="matches">
-
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title" style="color: #7CB9E8;">اختلاف گل</h5>
+                <p class="card-text">.اگر اختلاف گل بین دو تیم را به‌درستی پیش‌بینی کنید، اما نتیجه دقیق نباشد،<strong style="font-weight:bolder ;font-size: 20px; color: #7CB9E8;">  ۶ </strong> امتیاز به شما تعلق می‌گیرد</p>
+            </div>
         </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title" style="color: #FFC72C;">تیم برنده</h5>
+                <p class="card-text">.اگر تنها تیم برنده را به‌درستی پیش‌بینی کنید (بدون توجه به نتیجه دقیق یا اختلاف گل)،<strong  style="font-weight:bolder ;font-size: 20px; color: #FFC72C;">  ۴ </strong> امتیاز کسب می‌کنید</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title" style="color: #AA0000;">نتیجه اشتباه</h5>
+                <p class="card-text">.در صورتی که هیچ‌یک از موارد بالا را به‌درستی پیش‌بینی نکنید، تنها  <strong style="font-weight:bolder ;font-size: 20px; color: #AA0000;">  ۱ </strong> امتیاز برای شرکت در پیش‌بینی دریافت خواهید کرد</p>
+            </div>
+        </div>
+
     </div>
 
-    <div class="page scoreboard-container d-none">
 
     </div>
-    <div class="page my-predictions-container d-none">
+  </div>
 
+
+  <div class="page profile-container d-none">
+    <div class="header">
+      <h1 class="text-center my-4" >پروفایل من</h1>
+        <div class="container justify-content-center align-items-center">
+          <div class="alert" id="profile-alert" role="alert">
+
+          </div>
+          <form dir="rtl" style="margin-left: 20%;margin-right: 10%">
+            <div class="row mb-3">
+              <label for="fullName" class="col-sm-2 col-form-label">نام و نام خانوادگی</label>
+              <div class="col-sm-10">
+                <input placeholder="نام و نام خانوادگی " type="text" class="form-control" id="fullName">
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label for="phoneNumber" class="col-sm-2 col-form-label">شماره تلفن</label>
+              <div class="col-sm-10">
+                <input placeholder="شماره تلفن" dir="rtl" type="tel" class="form-control" id="phoneNumber">
+              </div>
+            </div>
+
+            <button id="edit-profile-btn" type="submit" class="btn btn-success mr-5 my-2" style="float: left;">ویرایش</button>
+          </form>
+        </div>
+
+      </div>
+  </div>
+
+  <div class="page league-container d-none">
+    <div class="header">
+      <h1>لیگ برتر ایران</h1>
+
+      <div class="tabs">
+        <button class="tab" data-week="3">هفته 3</button>
+        <button class="tab" data-week="2">هفته 2</button>
+        <button class="tab active" data-week="1">هفته 1</button>
+      </div>
     </div>
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-    <script src="scripts.js"></script>
+    <div class="matches" id="matches">
+
+    </div>
+  </div>
+
+  <div class="page scoreboard-container d-none">
+
+  </div>
+  <div class="page my-predictions-container d-none">
+
+  </div>
+
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" crossorigin="anonymous"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+  <script src="scripts.js"></script>
 </body>
+
 </html>
