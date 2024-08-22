@@ -152,4 +152,8 @@ img{
     .progress-bar-par{
         display: block;
     }
+
+    .match-actions{
+        display: block;
+    }
  }
