@@ -11,6 +11,7 @@ body {
 .header {
     text-align: center;
     margin-bottom: 20px;
+    margin-top: 10px;
 }
 
 h1 {
@@ -115,3 +116,35 @@ img{
     cursor: not-allowed;
 }
 
+.progress-bar-par{
+    display: none;
+}
+
+
+
+@media (max-width: 767.98px) {
+
+    .match-time{
+        font-size: 10px;
+    }
+
+    img{
+        width: 30px;
+        height: 30px;
+    }
+
+    span{
+        font-size: 10px;
+    }
+
+    .week-counter{
+        display: none;
+    }
+
+    .progress-bar-inline-par{
+        display: none;
+    }
+    .progress-bar-par{
+        display: block;
+    }
+ }

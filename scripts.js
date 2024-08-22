@@ -44,6 +44,30 @@ const weeksCounter ={
 
 
 
+generateFakePredictions = () =>{
+
+    const finisedEvents = [
+        {"idEvent": "2126892","strHomeTeam": "Mes Rafsanjan",
+        "strAwayTeam": "Tractor Sazi",},{"idEvent": "2126891","strHomeTeam": "Nassaji Mazandaran",
+        "strAwayTeam": "Foolad FC",},{"idEvent": "2126890","strHomeTeam": "Shams Azar Qazvin",
+        "strAwayTeam": "Esteghlal",},{"idEvent": "2126887","strHomeTeam": "Havadar",
+        "strAwayTeam": "Kheybar Khorramabad",},{"idEvent": "2126886","strHomeTeam": "Sepahan",
+        "strAwayTeam": "Chadormalu",},{"idEvent": "2126889","strHomeTeam": "Esteghlal Khuzestan",
+        "strAwayTeam": "Aluminium Arak",},
+        {"idEvent": "2126888","strHomeTeam": "Malavan","strAwayTeam": "Gol Gohar",},{"idEvent": "2126885","strHomeTeam": "Persepolis","strAwayTeam": "ZOB Ahan"}
+
+    ]
+    finisedEvents.forEach((fEvent)=>{
+        const fakeHomeScorePred = getRandomNumber(6);
+        const fakeAwayScorePred = getRandomNumber(6);
+        localStorage.setItem(fEvent.idEvent, JSON.stringify({"result":`${fakeHomeScorePred}${fakeAwayScorePred}`, "homeScore":fakeHomeScorePred, "awayScore":fakeAwayScorePred, "homeTeam":fEvent.strHomeTeam, "awayTeam":fEvent.strAwayTeam}));
+    })
+}
+
+generateFakePredictions();
+
+let MyScore = 0;
+
 
 
 function renderPredictionBtn(eventId, eventStatus,homeTeam,awayTeam){
@@ -64,6 +88,46 @@ function generateThreefakePercentages() {
     let third = 100 - first - second;
 
     return [first, second, third];
+}
+
+
+function calculateMyScore(prediction, realHomeScore, realAwayScore){
+    let gainedScore = 1; // by default 1 score which relevents to wrong prediction
+
+    if (prediction.awayScore == realHomeScore && prediction.homeScore == realAwayScore){
+        // perfect prediction
+        gainedScore = 10;
+        MyScore += gainedScore;
+        return [gainedScore, 'پیش بینی دقیق'];
+    }
+
+    // goal difference prediction
+
+    let realGoalDifference = Math.abs(realHomeScore - realAwayScore);
+    let predictedGoalDifference = Math.abs(parseInt(prediction.homeScore) - parseInt(prediction.awayScore));
+
+    if ( realGoalDifference == predictedGoalDifference){
+        gainedScore = 6;
+        MyScore += gainedScore;
+        return [gainedScore, 'اختلاف گل صحیح'];
+    }
+
+    // winner team
+
+    const realWinnerTeam = realHomeScore - realAwayScore > 0 ? "h" : realHomeScore - realAwayScore == 0 ? "d" : "a";
+    const predictedWinnerTeam = parseInt(prediction.homeScore) - parseInt(prediction.awayScore) > 0 ? "h" : parseInt(prediction.homeScore) - parseInt(prediction.awayScore) == 0 ? "d" : "a";
+
+    if (realWinnerTeam == predictedWinnerTeam){
+        gainedScore = 4;
+        MyScore += gainedScore;
+        return [gainedScore, 'پیش بینی صحیح تیم برنده'];
+    }
+
+
+
+
+    MyScore += gainedScore
+    return [gainedScore, 'پیش بینی نادرست'];
 }
 
 
@@ -114,7 +178,9 @@ function populateMatches(events,week=1){
     matchesDiv.innerHTML = "";
     // Loop over the events
     events[week].forEach((event) => {
+
         const eventId = event.idEvent;
+        const prediction = JSON.parse(localStorage.getItem(eventId));
         const intHomeScore = event.intHomeScore;
         const intAwayScore = event.intAwayScore;
         const eventStatus = event.strStatus;
@@ -131,14 +197,16 @@ function populateMatches(events,week=1){
         const aWinPoss = percentages[1];
         const drawPoss = percentages[2];
         const popularResults = generateThreeFakeResults();
-
+        let gainedScore = null;
+        let predictionWinningMsg = null
+        if (prediction) [gainedScore, predictionWinningMsg] = calculateMyScore(prediction, intHomeScore, intAwayScore);
 
         matchesDiv.innerHTML += `<div class="container my-5">
-        <div class="row justify-content-lg-center">
-          <div class="col col-lg-2">
+        <div class="row justify-content-center">
+          <div class="col col-lg-2 mb-4">
             <div class="event-details text-center my-3">
               <small style="display:block">${getPersianDate(dateEvent)}</small>
-              <small style="display:block">ساعت ${eventTimeLocal ? eventTimeLocal : 'نامشخص'} </small>
+              <small style="display:block">ساعت ${eventTimeLocal ? eventTimeLocal.slice(0,5) : 'نامشخص'} </small>
 
 
               ${renderPredictionBtn(eventId, eventStatus,homeTeamName,awayTeamName)}
@@ -149,9 +217,9 @@ function populateMatches(events,week=1){
             <div class="teams">
               <div class="team">
               ${eventStatus !== "Match Finished" ? `<div class="match-actions my-3 ">
-              <button class="plus-button" >+</button>
-              <span id="away-score-${eventId}">0</span>
-              <button class="minus-button">-</button>
+              <button class="button-${eventId} plus-button ${prediction && "d-none"}" >+</button>
+              <span id="away-score-${eventId}">${prediction ? `<span class="bg-primary px-2 " style="border-radius:25px">${prediction.awayScore}</span>`: '0'}</span>
+              <button class="button-${eventId} minus-button ${prediction && "d-none"}" >-</button>
             </div>` : `<span class="bg-success px-2 " style="border-radius:25px">${intAwayScore}</span>`}
 
                 <span>${translations[awayTeamName]}</span>
@@ -161,16 +229,19 @@ function populateMatches(events,week=1){
 
               <div class="team">
               ${eventStatus !== "Match Finished" ? `<div class="match-actions my-3">
-              <button class="plus-button">+</button>
-              <span id="home-score-${eventId}">0</span>
-              <button class="minus-button">-</button>
+              <button class="button-${eventId} plus-button ${prediction && "d-none"}" >+</button>
+              <span id="home-score-${eventId}" >${prediction ? `<span class="bg-primary px-2 " style="border-radius:25px">${prediction.homeScore}</span>`: '0'}</span>
+              <button class="button-${eventId} minus-button ${prediction && "d-none"}" >-</button>
             </div>` : `<span class="bg-success px-2 " style="border-radius:25px">${intHomeScore}</span>`}
 
                 <span>${translations[homeTeamName]}</span>
                 <img src="${homeTeamBadge}" />
               </div>
             </div>
+            ${eventStatus === "Match Finished" && gainedScore ? `<p class="text-center my-4">${predictionWinningMsg}</p> <p class="text-center my-4">${gainedScore} :   امتیاز دریافتی از این بازی  </p><p class="text-center my-4">مجموع امتیازات شما پس از این بازی : ${MyScore}</p>` : '' }
+
           </div>
+
           <div class="col col-lg-2"><p class="week-counter">${weeksCounter[week]}</p></div>
         </div>
         <div class="container my-2 d-none" style="text-align:right;" id="event-details-container-${eventId}">
@@ -184,18 +255,21 @@ function populateMatches(events,week=1){
         <div style="background-color:transparent"  class="progress my-2" dir="rtl">
 
         <div  class="progress-bar bg-success px-2 " role="progressbar" style="width: ${hWinPoss}%; border-radius:20px" aria-valuenow="${hWinPoss}" aria-valuemin="0" aria-valuemax="100"></div>
-        <p class="mx-2">برد ${translations[homeTeamName]} -  % ${hWinPoss}</p>
+        <p class="mx-2 progress-bar-inline-par">برد ${translations[homeTeamName]} -  % ${hWinPoss}</p>
         </div>
+        <p class="mx-2 progress-bar-par">برد ${translations[homeTeamName]} -  % ${hWinPoss}</p>
         <div  style="background-color:transparent" class="progress my-2" dir="rtl">
 
         <div  class="progress-bar bg-info px-2 " role="progressbar" style="width: ${drawPoss}%; border-radius:20px" aria-valuenow="${drawPoss}" aria-valuemin="0" aria-valuemax="100"></div>
-        <p class="mx-2">تساوی -  % ${drawPoss}</p>
+        <p class="mx-2 progress-bar-inline-par">تساوی -  % ${drawPoss}</p>
         </div>
+        <p class="mx-2 progress-bar-par">تساوی -  % ${drawPoss}</p>
         <div  style="background-color:transparent" class="progress my-2" dir="rtl">
 
         <div  class="progress-bar bg-danger px-2 " role="progressbar" style="width: ${aWinPoss}%; border-radius:20px" aria-valuenow="${aWinPoss}" aria-valuemin="0" aria-valuemax="100"></div>
-        <p class="mx-2">برد ${translations[awayTeamName]} -  % ${aWinPoss}</p>
+        <p class="mx-2 progress-bar-inline-par">برد ${translations[awayTeamName]} -  % ${aWinPoss}</p>
         </div>
+        <p class="mx-2 progress-bar-par">برد ${translations[awayTeamName]} -  % ${aWinPoss}</p>
         <p class="text-right my-4">پیش بینی های پر طرفدار</p>
          ${renderPopularResults(popularResults, homeTeamName, awayTeamName)}
         </div>
@@ -203,7 +277,7 @@ function populateMatches(events,week=1){
       `;
       });
 
-
+      console.log(MyScore)
       document.querySelectorAll(".details-btn").forEach((button) => {
 
         button.addEventListener("click", function(){
@@ -223,13 +297,20 @@ function populateMatches(events,week=1){
             const eventId = this.dataset.eventId;
             const homeTeam = this.dataset.homeTeam;
             const awayTeam = this.dataset.awayTeam;
-            const homeScore = document.getElementById(`home-score-${eventId}`).innerText;
-            const awayScore = document.getElementById(`away-score-${eventId}`).innerText;
+            const homeScoreSpan = document.getElementById(`home-score-${eventId}`);
+            const awayScoreSpan = document.getElementById(`away-score-${eventId}`);
+            const homeScore = homeScoreSpan.innerText;
+            const awayScore = awayScoreSpan.innerText;
             localStorage.setItem(eventId, JSON.stringify({"result":`${homeScore}${awayScore}`, "homeScore":homeScore, "awayScore":awayScore, "homeTeam":homeTeam, "awayTeam":awayTeam}));
 
             this.innerHTML =" پیش بینی ثبت شده";
             this.classList.add("cursor-forbid","btn-warning");
             this.setAttribute("disabled", "true");
+            homeScoreSpan.innerHTML = `<span class="bg-primary px-2 " style="border-radius:25px">${homeScore}</span>`;
+            awayScoreSpan.innerHTML = `<span class="bg-primary px-2 " style="border-radius:25px">${awayScore}</span>`;
+            document.querySelectorAll(`.button-${eventId}`).forEach((element) =>{
+                element.classList.add("d-none");
+            })
         })
 
       });
@@ -298,13 +379,13 @@ fetch("events.json")
         document.querySelector("#scoreboard").classList.remove("d-none");
         predContainer.classList.remove('d-none');
         predContainer.innerHTML = "";
-        predContainer.innerHTML += `<div class="header"><h1>پیش بینی های من</h1></div>`;
+        predContainer.innerHTML += `<div class="header"><h1>پیش بینی های من</h1><p class="text-center">مجموع امتیازات من : ${MyScore}</p></div>`;
         Object.entries(localStorage).forEach(([key, value]) => {
             if (key !== "length"){
                 let pred = JSON.parse(value);
                 // predContainer.innerHTML += `<p class="text-center my-5 px-3">  ${translations[pred.homeTeam]} <span class="bg-primary px-2 " style="border-radius:25px" >${pred.homeScore}</span > <span class="bg-primary px-2 " style="border-radius:25px">${pred.awayScore}</span> ${translations[pred.awayTeam]}</p>`;
                 predContainer.innerHTML +=  `<div class="container my-5">
-                <div class="row justify-content-lg-center"><div class="teams">
+                <div class="row justify-content-center"><div class="teams">
                 <div class="team">
 
                   <span>${translations[pred.homeTeam]}</span>
@@ -362,37 +443,37 @@ fetch("events.json")
             <th scope="row">1</th>
             <td>سارا</td>
             <td>شاهی</td>
-            <td>270</td>
+            <td>48</td>
           </tr>
           <tr>
             <th scope="row">2</th>
             <td>احمد</td>
             <td>کاظمی</td>
-            <td>250</td>
+            <td>42</td>
           </tr>
           <tr>
             <th scope="row">3</th>
             <td>حامد</td>
             <td>آل یاسین</td>
-            <td>150</td>
+            <td>32</td>
           </tr>
           <tr>
             <th scope="row">4</th>
             <td>خشایار</td>
             <td>زاهدی</td>
-            <td>110</td>
+            <td>28</td>
           </tr>
           <tr>
             <th scope="row">5</th>
             <td>ستاره</td>
             <td>پاکزاد</td>
-            <td>40</td>
+            <td>20</td>
           </tr>
           <tr>
             <th scope="row">6</th>
             <td>محمد</td>
             <td>امیری</td>
-            <td>10</td>
+            <td>8</td>
           </tr>
 
         </tbody>
