@@ -43,7 +43,7 @@ const weeksCounter = {
 };
 
 
-if (!localStorage.getItem("profile")) localStorage.setItem("profile", JSON.stringify({"fullName":"بهنام تاج فیروز","phone":"093213121"}));
+if (!localStorage.getItem("profile")) localStorage.setItem("profile", JSON.stringify({"fName":"بهنام","lName":"تاج فیروز","phone":"093213121"}));
 
 
 const finisedEvents = [
@@ -566,8 +566,9 @@ fetch("events.json")
     document.querySelector("#scoreboard-page").classList.remove("d-none");
     document.querySelector("#league-page").classList.remove("d-none");
     this.style.color="white";
-    const profile = JSON.parse(localStorage.getItem("profile", {"fullName":"هوشنگ ابتهاج","phone":"093213121"}));
-    $('#fullName').val(profile.fullName);
+    const profile = JSON.parse(localStorage.getItem("profile", {"fName":"هوشنگ","lName":"ابتهاج","phone":"093213121"}));
+    $('#fName').val(profile.fName);
+    $('#lName').val(profile.lName);
     $('#phoneNumber').val(profile.phone);
     $("#profile-alert").html("");
     });
@@ -575,16 +576,17 @@ fetch("events.json")
 
     document.querySelector("#edit-profile-btn").addEventListener("click", function (e) {
         e.preventDefault();
-        const fullName =  $('#fullName').val();
+        const fName =  $('#fName').val();
+        const lName =  $('#lName').val();
         const phoneNumber = $('#phoneNumber').val();
-        console.log(fullName.length, phoneNumber)
-        if (fullName.length === 0 || phoneNumber.length === 0){
-            $("#profile-alert").html("تکمیل فیلدهای نام و تلفن ضروری است");
+
+        if (fName.length === 0 || lName.length === 0  || phoneNumber.length === 0){
+            $("#profile-alert").html("تکمیل تمامی فیلدها ضروری است");
             $("#profile-alert").css("color","#AA0000");
             return;
         }
 
-        localStorage.setItem("profile", JSON.stringify({"fullName":fullName,"phone":phoneNumber}));
+        localStorage.setItem("profile", JSON.stringify({"fName":fName,"lName":lName,"phone":phoneNumber}));
         $("#profile-alert").html("اطلاعات شما با موفقیت ویرایش شد");
         $("#profile-alert").css("color","#32de84");
         });
@@ -659,9 +661,10 @@ fetch("events.json")
 
         document.querySelector("#league-page").classList.remove("d-none");
         this.classList.add("d-none");
+        const profile = JSON.parse(localStorage.getItem("profile", {"fName":"هوشنگ","lName":"ابتهاج","phone":"093213121"}));
         const newObject = {
-          fname: "بهنام",
-          lname: "تاج فیروز",
+          fname: profile.fName,
+          lname: profile.lName,
           score: MyScore,
         };
         addRowToTable(newObject);
