@@ -383,20 +383,19 @@ fetch("events.json")
         Object.entries(localStorage).forEach(([key, value]) => {
             if (key !== "length"){
                 let pred = JSON.parse(value);
-                // predContainer.innerHTML += `<p class="text-center my-5 px-3">  ${translations[pred.homeTeam]} <span class="bg-primary px-2 " style="border-radius:25px" >${pred.homeScore}</span > <span class="bg-primary px-2 " style="border-radius:25px">${pred.awayScore}</span> ${translations[pred.awayTeam]}</p>`;
                 predContainer.innerHTML +=  `<div class="container my-5">
                 <div class="row justify-content-center"><div class="teams">
                 <div class="team">
 
-                  <span>${translations[pred.homeTeam]}</span>
-                  <span class="bg-success px-2 " style="border-radius:25px">${pred.homeScore}</span>
+                <span class="bg-primary px-2 " style="border-radius:25px">${pred.awayScore}</span>
+                <span>${translations[pred.awayTeam]}</span>
+
                 </div>
 
                 <div class="team">
 
-                <span class="bg-success px-2 " style="border-radius:25px">${pred.awayScore}</span>
-                <span>${translations[pred.awayTeam]}</span>
-
+                <span>${translations[pred.homeTeam]}</span>
+                <span class="bg-primary px-2 " style="border-radius:25px">${pred.homeScore}</span>
                 </div>
               </div> </div></div>`
             }
@@ -429,7 +428,7 @@ fetch("events.json")
         scoreboardContainer.innerHTML = "";
         scoreboardContainer.innerHTML += `<div class="header"><h1>جدول امتیازات</h1></div>`;
 
-        scoreboardContainer.innerHTML += `<table class="table table-bordered text-light text-center" dir="rtl">
+        scoreboardContainer.innerHTML += `<table id="score-table" class="table table-bordered text-light text-center" dir="rtl">
         <thead>
           <tr>
             <th scope="col">رتبه</th>
@@ -440,37 +439,37 @@ fetch("events.json")
         </thead>
         <tbody>
           <tr>
-            <th scope="row">1</th>
+            <td scope="row">1</td>
             <td>سارا</td>
             <td>شاهی</td>
             <td>48</td>
           </tr>
           <tr>
-            <th scope="row">2</th>
+            <td scope="row">2</td>
             <td>احمد</td>
             <td>کاظمی</td>
             <td>42</td>
           </tr>
           <tr>
-            <th scope="row">3</th>
+            <td scope="row">3</td>
             <td>حامد</td>
             <td>آل یاسین</td>
             <td>32</td>
           </tr>
           <tr>
-            <th scope="row">4</th>
+            <td scope="row">4</td>
             <td>خشایار</td>
             <td>زاهدی</td>
             <td>28</td>
           </tr>
           <tr>
-            <th scope="row">5</th>
+            <td scope="row">5</td>
             <td>ستاره</td>
             <td>پاکزاد</td>
             <td>20</td>
           </tr>
           <tr>
-            <th scope="row">6</th>
+            <td scope="row">6</td>
             <td>محمد</td>
             <td>امیری</td>
             <td>8</td>
@@ -481,7 +480,8 @@ fetch("events.json")
 
         document.querySelector("#backbtn").classList.remove("d-none");
         this.classList.add("d-none");
-
+        const newObject = { fname: "بهنام", lname: "تاج فیروز", score: MyScore };
+        addRowToTable(newObject);
     })
 
 
@@ -695,6 +695,64 @@ const data = {
     if(format==="d/m/y")
       return `${day}/${month}/${year}`;
   }
+
+
+
+  function addRowToTable(newObject) {
+    // Get the table and its rows
+    const table = document.getElementById("score-table");
+
+    const rows = table.getElementsByTagName("tr");
+
+    // Iterate through the rows to find the correct position
+    let inserted = false;
+
+    for (let i = 1; i < rows.length; i++) { // Start from 1 to skip the header row
+        const scoreCell = rows[i].getElementsByTagName("td")[3]; // Assuming score is in the 4th column
+
+        const currentScore = parseFloat(scoreCell.textContent);
+
+        // If the new object's score is higher, insert the new row here
+        if (newObject.score > currentScore) {
+            const newRow = table.insertRow(i);
+            newRow.insertCell(0).textContent = i; // Insert position
+            newRow.insertCell(1).textContent = newObject.fname;
+            newRow.insertCell(2).textContent = newObject.lname;
+            newRow.insertCell(3).textContent = newObject.score;
+            newRow.style.backgroundColor = "green";
+            newRow.style.color = "white";
+
+            inserted = true;
+            break;
+        }
+    }
+
+    // If the new object has the lowest score, add it to the end
+    if (!inserted) {
+        const newRow = table.insertRow(rows.length);
+        newRow.insertCell(0).textContent = rows.length; // Insert position
+        newRow.insertCell(1).textContent = newObject.fname;
+        newRow.insertCell(2).textContent = newObject.lname;
+        newRow.insertCell(3).textContent = newObject.score;
+    }
+
+    // Update positions for all rows
+    updateTablePositions(table);
+}
+
+function updateTablePositions(table) {
+    const rows = table.getElementsByTagName("tr");
+    for (let i = 1; i < rows.length; i++) { // Start from 1 to skip the header row
+        rows[i].getElementsByTagName("td")[0].textContent = i; // Update position column
+    }
+}
+
+
+
+
+
+
+
 //   console.log(getPersianDate('2024-08-15'));
 //   console.log(getPersianDate("y/m/d"));
 //   console.log(getPersianDate("d/m/y"));
